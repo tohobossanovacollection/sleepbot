@@ -6,6 +6,7 @@ Calculates optimal sleep/wake times based on 90-minute sleep cycles.
 import asyncio
 import logging
 from datetime import datetime, timedelta
+import pytz
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
@@ -30,6 +31,7 @@ SLEEP_CYCLE_MINUTES = 90       # one full sleep cycle
 FALL_ASLEEP_MINUTES = 14       # average time to fall asleep
 MIN_CYCLES = 4                 # minimum healthy cycles  (6 h)
 MAX_CYCLES = 6                 # maximum recommended cycles (9 h)
+LOCAL_TZ = pytz.timezone("Asia/Bangkok")  # UTC+7 (Hanoi, Bangkok, Jakarta)
 
 # Conversation states
 WAITING_FOR_WAKE_TIME = 1
@@ -37,6 +39,10 @@ WAITING_FOR_SLEEP_TIME = 2
 
 
 # ── Helper functions ──────────────────────────────────────────────────────────
+
+def now_local() -> datetime:
+    """Return the current time in the local timezone (UTC+7)."""
+    return datetime.now(LOCAL_TZ).replace(tzinfo=None)
 
 def calculate_bedtimes(wake_time: datetime) -> list[datetime]:
     """Return a list of ideal bedtimes for a given wake-up time."""
@@ -72,7 +78,7 @@ def parse_time(text: str) -> datetime | None:
     """Parse common time formats (e.g. '7:30', '7:30 AM', '22:00')."""
     text = text.strip()
     formats = ["%I:%M %p", "%I:%M%p", "%H:%M", "%I %p", "%I%p"]
-    now = datetime.now()
+    now = now_local()
     for fmt in formats:
         try:
             t = datetime.strptime(text, fmt)
@@ -178,7 +184,7 @@ async def sleep_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
 
 
 async def now_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    now = datetime.datetime.now()
+    now = now_local()
     wake_times = calculate_wake_times(now)
     msg = build_wake_message(wake_times, now)
     await update.message.reply_text(msg, parse_mode="Markdown", reply_markup=main_menu_keyboard())
@@ -262,7 +268,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         return WAITING_FOR_SLEEP_TIME
 
     elif query.data == "sleep_now":
-        now = datetime.now()
+        now = now_local()
         wake_times = calculate_wake_times(now)
         msg = build_wake_message(wake_times, now)
         await query.message.reply_text(msg, parse_mode="Markdown", reply_markup=main_menu_keyboard())
