@@ -100,7 +100,7 @@ def build_bedtime_message(bedtimes: list, wake_time: datetime) -> str:
 
 def build_wake_message(wake_times: list, sleep_time: datetime) -> str:
     lines = [
-        f"🛏 Bedtime: *{format_time(sleep_time)}*\n",
+        f"🛏 Bedtime: *{format_time(datetime.now())}*\n",
         "⏰ Recommended wake-up times:\n",
     ]
     emojis = ["🥇", "🥈", "🥉", "🏅", "🎖", "⭐"]
