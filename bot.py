@@ -178,7 +178,7 @@ async def sleep_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
 
 
 async def now_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    now = datetime.now()
+    now = datetime.datetime.now()
     wake_times = calculate_wake_times(now)
     msg = build_wake_message(wake_times, now)
     await update.message.reply_text(msg, parse_mode="Markdown", reply_markup=main_menu_keyboard())
