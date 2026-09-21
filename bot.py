@@ -19,7 +19,44 @@ from telegram.ext import (
 )
 import os
 
-BOT_TOKEN = os.environ["BOT_TOKEN"]
+# def resolve_bot_token(local_token=None):
+#     token = os.environ.get("BOT_TOKEN", "").strip()
+
+#     if token:
+#         return token
+
+#     if local_token and local_token.strip():
+#         return local_token.strip()
+
+#     raise RuntimeError(
+#         "BOT_TOKEN is not configured."
+#     )
+# -> more suitable for this pj and easy to read
+def resolve_bot_token(
+    environment: dict[str, str] | None = None,
+    local_token: str | None = None,
+) -> str:
+    """Return Railway's token first, then the local config token."""
+    token = (environment if environment is not None else os.environ).get("BOT_TOKEN", "")
+    token = token.strip()
+    if token:
+        return token
+
+    if local_token and local_token.strip():
+        return local_token.strip()
+
+    raise RuntimeError(
+        "BOT_TOKEN is not configured. Set it in Railway Variables or add it to config.py for local runs."
+    )
+
+
+try:
+    from config import BOT_TOKEN as LOCAL_BOT_TOKEN
+except ImportError:
+    LOCAL_BOT_TOKEN = None
+
+
+BOT_TOKEN = resolve_bot_token(local_token=LOCAL_BOT_TOKEN)
 
 # ── Logging ──────────────────────────────────────────────────────────────────
 logging.basicConfig(

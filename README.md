@@ -49,19 +49,33 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### 5. Add your bot token
+### 5. Add your local bot token
 
-Open `config.py` and replace the placeholder:
+Create `config.py` (it is ignored by Git) and add your token:
 
 ```python
 BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN_HERE"
 ```
 
-### 6. Run the bot
+### 6. Run locally
 
 ```powershell
 python bot.py
 ```
+
+The local `config.py` token is used only when `BOT_TOKEN` is not set in the
+environment.
+
+## Deploy on Railway
+
+1. Push this repository to GitHub and create a new Railway project from it.
+2. In Railway, open the service's **Variables** and add `BOT_TOKEN` with the
+   token Railway should use.
+3. Deploy. Railway uses the included `Procfile` worker command:
+   `python bot.py`.
+
+Railway's `BOT_TOKEN` always takes precedence over `config.py`. Do not upload
+or commit `config.py`.
 
 ---
 
@@ -70,7 +84,7 @@ python bot.py
 ```
 sleepbot/
 ├── bot.py          # Main bot logic
-├── config.py       # Bot token 
+├── config.py       # Local-only bot token (Git-ignored)
 ├── requirements.txt
 ├── .gitignore
 └── README.md
