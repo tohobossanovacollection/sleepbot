@@ -17,7 +17,9 @@ from telegram.ext import (
     ContextTypes,
     ConversationHandler,
 )
-from config import BOT_TOKEN
+import os
+
+BOT_TOKEN = os.environ["BOT_TOKEN"]
 
 # ── Logging ──────────────────────────────────────────────────────────────────
 logging.basicConfig(
