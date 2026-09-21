@@ -70,7 +70,7 @@ python bot.py
 ```
 sleepbot/
 ├── bot.py          # Main bot logic
-├── config.py       # Bot token (keep private!)
+├── config.py       # Bot token 
 ├── requirements.txt
 ├── .gitignore
 └── README.md
